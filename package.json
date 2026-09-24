@@ -1,0 +1,41 @@
+{
+  "name": "radar-m",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "dev": "tsx src/server.ts",
+    "dry-run": "tsx scripts/dry-run.ts",
+    "smoke": "tsx scripts/smoke.ts",
+    "registry": "tsx scripts/import-sources.ts",
+    "db:migrate": "tsx scripts/migrate.ts",
+    "setup": "tsx scripts/setup.ts",
+    "monitor": "tsx scripts/monitor.ts",
+    "reconcile": "tsx scripts/reconcile.ts",
+    "smoke:db": "tsx scripts/live-db-smoke.ts",
+    "test:db:live": "tsx scripts/live-transaction-smoke.ts",
+    "format": "prettier --write \"src/**/*.ts\" \"api/**/*.ts\" \"scripts/**/*.ts\" \"tests/**/*.ts\""
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.117.1",
+    "cheerio": "1.2.0",
+    "dotenv": "18.0.3",
+    "fast-xml-parser": "5.11.1",
+    "postgres": "3.4.9",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.8",
+    "@types/node": "26.6.2",
+    "prettier": "3.9.9",
+    "supabase": "2.117.0",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2",
+    "vitest": "5.0.1"
+  }
+}

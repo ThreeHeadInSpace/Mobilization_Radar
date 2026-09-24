@@ -1,0 +1,758 @@
+[
+  {
+    "id": "9e73c2b20c59f37268557c71",
+    "name": "Официальное опубликование правовых актов",
+    "type": "OFFICIAL_LEGAL",
+    "base_url": "https://publication.pravo.gov.ru/",
+    "region": null,
+    "collection_method": "html",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://publication.pravo.gov.ru/",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "a76e3534e2841d29123b7c48",
+    "name": "Президент России",
+    "type": "OFFICIAL_FEDERAL",
+    "base_url": "https://kremlin.ru/",
+    "region": null,
+    "collection_method": "html",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://kremlin.ru/",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "c482d41daa1ab205ae73fb6f",
+    "name": "Указы и документы Президента",
+    "type": "OFFICIAL_FEDERAL",
+    "base_url": "https://kremlin.ru/acts/bank",
+    "region": null,
+    "collection_method": "html",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://kremlin.ru/acts/bank",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "e5045d452da69dfb1570f79c",
+    "name": "Министерство обороны России",
+    "type": "OFFICIAL_FEDERAL",
+    "base_url": "https://mil.ru/",
+    "region": null,
+    "collection_method": "html",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://mil.ru/",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "bfb1c1c01b9dad7606fcb4ef",
+    "name": "Официальный Telegram Минобороны России",
+    "type": "TELEGRAM",
+    "base_url": "https://t.me/mod_russia",
+    "region": null,
+    "collection_method": "telegram",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://t.me/mod_russia",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "21781e1d17053e4266cc576d",
+    "name": "Официальный Реестр повесток",
+    "type": "OTHER",
+    "base_url": "https://xn--b1afabzvcegckfhg.xn--p1ai/",
+    "region": null,
+    "collection_method": "manual",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://xn--b1afabzvcegckfhg.xn--p1ai/",
+      "baseline_only": false,
+      "note": "Requires dedicated adapter; coverage stays unknown."
+    }
+  },
+  {
+    "id": "4115c1b1c3609f84fd5eaacc",
+    "name": "Государственная Дума",
+    "type": "OFFICIAL_FEDERAL",
+    "base_url": "https://duma.gov.ru/",
+    "region": null,
+    "collection_method": "html",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://duma.gov.ru/",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "f1e1c9ba5d9f2e21f5046905",
+    "name": "Система законодательной деятельности Госдумы",
+    "type": "OFFICIAL_FEDERAL",
+    "base_url": "https://sozd.duma.gov.ru/",
+    "region": null,
+    "collection_method": "html",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://sozd.duma.gov.ru/",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "ce6eacd864829f8d2cb638fa",
+    "name": "Совет Федерации",
+    "type": "OFFICIAL_FEDERAL",
+    "base_url": "https://council.gov.ru/",
+    "region": null,
+    "collection_method": "html",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://council.gov.ru/",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "8fbc165c98c6ed5017812b2c",
+    "name": "Правительство России: документы",
+    "type": "OFFICIAL_FEDERAL",
+    "base_url": "https://government.ru/docs",
+    "region": null,
+    "collection_method": "html",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://government.ru/docs",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "d47e24363eecdcc447bf35bd",
+    "name": "31-ФЗ в КонсультантПлюс",
+    "type": "OTHER",
+    "base_url": "https://consultant.ru/document/cons_doc_LAW_13454",
+    "region": null,
+    "collection_method": "manual",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://consultant.ru/document/cons_doc_LAW_13454",
+      "baseline_only": true,
+      "note": "Requires dedicated adapter; coverage stays unknown."
+    }
+  },
+  {
+    "id": "f478896ff9cf0edc43220486",
+    "name": "53-ФЗ в КонсультантПлюс",
+    "type": "OTHER",
+    "base_url": "https://consultant.ru/document/cons_doc_LAW_18260",
+    "region": null,
+    "collection_method": "manual",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://consultant.ru/document/cons_doc_LAW_18260",
+      "baseline_only": true,
+      "note": "Requires dedicated adapter; coverage stays unknown."
+    }
+  },
+  {
+    "id": "b5e44e96fd0cbcef8a75f4ae",
+    "name": "Положение о воинском учете",
+    "type": "OTHER",
+    "base_url": "https://consultant.ru/document/cons_doc_LAW_64215",
+    "region": null,
+    "collection_method": "manual",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://consultant.ru/document/cons_doc_LAW_64215",
+      "baseline_only": true,
+      "note": "Requires dedicated adapter; coverage stays unknown."
+    }
+  },
+  {
+    "id": "b9588e37eb250f7d63928fe5",
+    "name": "ГАРАНТ",
+    "type": "OTHER",
+    "base_url": "https://garant.ru/",
+    "region": null,
+    "collection_method": "manual",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://garant.ru/",
+      "baseline_only": false,
+      "note": "Requires dedicated adapter; coverage stays unknown."
+    }
+  },
+  {
+    "id": "4a649d08024132066813485e",
+    "name": "КонсультантПлюс",
+    "type": "OTHER",
+    "base_url": "https://consultant.ru/",
+    "region": null,
+    "collection_method": "manual",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://consultant.ru/",
+      "baseline_only": true,
+      "note": "Requires dedicated adapter; coverage stays unknown."
+    }
+  },
+  {
+    "id": "97a514d99c6d1f29aadcca1a",
+    "name": "Интерфакс",
+    "type": "MAJOR_MEDIA",
+    "base_url": "https://www.interfax.ru/rss.asp",
+    "region": null,
+    "collection_method": "rss",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://interfax.ru/",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "540cbd6e933d4bdf654f7c13",
+    "name": "РБК",
+    "type": "MAJOR_MEDIA",
+    "base_url": "https://rssexport.rbc.ru/rbcnews/news/30/full.rss",
+    "region": null,
+    "collection_method": "rss",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://rbc.ru/",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "e43dad170520f39f0be09f07",
+    "name": "Коммерсантъ",
+    "type": "MAJOR_MEDIA",
+    "base_url": "https://www.kommersant.ru/RSS/news.xml",
+    "region": null,
+    "collection_method": "rss",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://kommersant.ru/",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "82931c71ec25c20c3301fe88",
+    "name": "Ведомости",
+    "type": "MAJOR_MEDIA",
+    "base_url": "https://vedomosti.ru/",
+    "region": null,
+    "collection_method": "html",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://vedomosti.ru/",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "45a0212fc0e891789730d647",
+    "name": "ТАСС",
+    "type": "MAJOR_MEDIA",
+    "base_url": "https://tass.ru/rss/v2.xml",
+    "region": null,
+    "collection_method": "rss",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://tass.ru/",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "fbd3789f1b20cac7b11bb94f",
+    "name": "РИА Новости",
+    "type": "MAJOR_MEDIA",
+    "base_url": "https://ria.ru/export/rss2/archive/index.xml",
+    "region": null,
+    "collection_method": "rss",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://ria.ru/",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "1e37e5cf5a6d8652a95790f6",
+    "name": "RTVI",
+    "type": "MAJOR_MEDIA",
+    "base_url": "https://rtvi.com/",
+    "region": null,
+    "collection_method": "html",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://rtvi.com/",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "794610b3a845c7b40ae2cc12",
+    "name": "Медиазона",
+    "type": "INDEPENDENT_MEDIA",
+    "base_url": "https://zona.media/rss",
+    "region": null,
+    "collection_method": "rss",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://zona.media/",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "a541507701d8a7a851baf06f",
+    "name": "Медуза",
+    "type": "INDEPENDENT_MEDIA",
+    "base_url": "https://meduza.io/rss/all",
+    "region": null,
+    "collection_method": "rss",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://meduza.io/",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "d3062639b109eef915e0f997",
+    "name": "Важные истории",
+    "type": "INDEPENDENT_MEDIA",
+    "base_url": "https://istories.media/",
+    "region": null,
+    "collection_method": "html",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://istories.media/",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "9a54c0e37ddeda7f6dce2ae7",
+    "name": "Вёрстка",
+    "type": "INDEPENDENT_MEDIA",
+    "base_url": "https://verstka.media/",
+    "region": null,
+    "collection_method": "html",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://verstka.media/",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "8970b3bbf89cf45817d09da2",
+    "name": "The Insider",
+    "type": "INDEPENDENT_MEDIA",
+    "base_url": "https://theins.ru/",
+    "region": null,
+    "collection_method": "html",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://theins.ru/",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "0372c1daee8b67847ac041cf",
+    "name": "Настоящее Время",
+    "type": "INDEPENDENT_MEDIA",
+    "base_url": "https://currenttime.tv/",
+    "region": null,
+    "collection_method": "html",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://currenttime.tv/",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "97c5d90d856eadb7fe14226c",
+    "name": "Сайт проекта",
+    "type": "LEGAL_NGO",
+    "base_url": "https://iditelesom.org/ru",
+    "region": null,
+    "collection_method": "html",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://iditelesom.org/ru",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "0537c145f8cf150cddb16bc2",
+    "name": "Telegram «Идите лесом»",
+    "type": "TELEGRAM",
+    "base_url": "https://t.me/iditelesom_help",
+    "region": null,
+    "collection_method": "telegram",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://t.me/iditelesom_help",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "506a0131f6f1f18421b91380",
+    "name": "ДСО",
+    "type": "LEGAL_NGO",
+    "base_url": "https://stoparmy.org/",
+    "region": null,
+    "collection_method": "html",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://stoparmy.org/",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "651caa06155075b18943ce28",
+    "name": "Telegram ДСО",
+    "type": "TELEGRAM",
+    "base_url": "https://t.me/stoparmy",
+    "region": null,
+    "collection_method": "telegram",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://t.me/stoparmy",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "d12d67d958a8cc50e397a809",
+    "name": "Telegram «Школа призывника»",
+    "type": "TELEGRAM",
+    "base_url": "https://t.me/netprizyvu",
+    "region": null,
+    "collection_method": "telegram",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://t.me/netprizyvu",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "60b092780c5f12036eb56f15",
+    "name": "Baza",
+    "type": "TELEGRAM",
+    "base_url": "https://t.me/bazabazon",
+    "region": null,
+    "collection_method": "telegram",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://t.me/bazabazon",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "2afa14fde93224f82f0d515c",
+    "name": "ASTRA",
+    "type": "TELEGRAM",
+    "base_url": "https://t.me/astrapress",
+    "region": null,
+    "collection_method": "telegram",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://t.me/astrapress",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "63728ca8d88fad9cdcb7d0ee",
+    "name": "Осторожно, новости",
+    "type": "TELEGRAM",
+    "base_url": "https://t.me/ostorozhno_novosti",
+    "region": null,
+    "collection_method": "telegram",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://t.me/ostorozhno_novosti",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "89402457b8b9b2994a479afb",
+    "name": "Mash",
+    "type": "TELEGRAM",
+    "base_url": "https://t.me/mash",
+    "region": null,
+    "collection_method": "telegram",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://t.me/mash",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "a0b079ab4faf3bcecf2314fb",
+    "name": "Поиск публикаций TGStat",
+    "type": "ANALYTICAL",
+    "base_url": "https://tgstat.ru/search",
+    "region": null,
+    "collection_method": "manual",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://tgstat.ru/search",
+      "baseline_only": false,
+      "note": "Requires dedicated adapter; coverage stays unknown."
+    }
+  },
+  {
+    "id": "76632dbd61615f54465fa916",
+    "name": "Google Trends для России",
+    "type": "ANALYTICAL",
+    "base_url": "https://trends.google.com/trending?geo=RU&hl=ru",
+    "region": null,
+    "collection_method": "manual",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://trends.google.com/trending?geo=RU&hl=ru",
+      "baseline_only": false,
+      "note": "Requires dedicated adapter; coverage stays unknown."
+    }
+  },
+  {
+    "id": "358b509c02406831cfdfa2bd",
+    "name": "Фонтанка",
+    "type": "REGIONAL_MEDIA",
+    "base_url": "https://fontanka.ru/",
+    "region": "Санкт-Петербург",
+    "collection_method": "html",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://fontanka.ru/",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "3ce496c0176c8674d4e643f8",
+    "name": "MSK1",
+    "type": "REGIONAL_MEDIA",
+    "base_url": "https://msk1.ru/",
+    "region": "Москва",
+    "collection_method": "html",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://msk1.ru/",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "4296728d28eae5e7767944dc",
+    "name": "E1 Екатеринбург",
+    "type": "REGIONAL_MEDIA",
+    "base_url": "https://e1.ru/",
+    "region": "Свердловская область",
+    "collection_method": "html",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://e1.ru/",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "5a92f5c3d94fcc131d1ad914",
+    "name": "74.RU Челябинск",
+    "type": "REGIONAL_MEDIA",
+    "base_url": "https://74.ru/",
+    "region": "Челябинская область",
+    "collection_method": "html",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://74.ru/",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "effd23b288e6857cab80eabe",
+    "name": "NGS Новосибирск",
+    "type": "REGIONAL_MEDIA",
+    "base_url": "https://ngs.ru/",
+    "region": "Новосибирская область",
+    "collection_method": "html",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://ngs.ru/",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "2f05ecf535db0aeb3c5deba8",
+    "name": "161.RU Ростов-на-Дону",
+    "type": "REGIONAL_MEDIA",
+    "base_url": "https://161.ru/",
+    "region": "Ростовская область",
+    "collection_method": "html",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://161.ru/",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "529dec7fc6f86238e9c63fdb",
+    "name": "59.RU Пермь",
+    "type": "REGIONAL_MEDIA",
+    "base_url": "https://59.ru/",
+    "region": "Пермский край",
+    "collection_method": "html",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://59.ru/",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "c0cce5a79d3e1d9453b6a98d",
+    "name": "63.RU Самара",
+    "type": "REGIONAL_MEDIA",
+    "base_url": "https://63.ru/",
+    "region": "Самарская область",
+    "collection_method": "html",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://63.ru/",
+      "baseline_only": false,
+      "note": "Seed classification; independence verified per finding."
+    }
+  },
+  {
+    "id": "e700967f7d85d80f1ca9aba3",
+    "name": "Единая информационная система госзакупок",
+    "type": "OTHER",
+    "base_url": "https://zakupki.gov.ru/",
+    "region": null,
+    "collection_method": "manual",
+    "active": true,
+    "reliability_metadata": {
+      "seed_url": "https://zakupki.gov.ru/",
+      "baseline_only": false,
+      "note": "Requires dedicated adapter; coverage stays unknown."
+    }
+  },
+  {
+    "id": "0307981ce5b5d59ce600000c",
+    "name": "Официальный источник: Московская область",
+    "type": "OFFICIAL_REGIONAL",
+    "base_url": "https://mosreg.ru/",
+    "region": "Московская область",
+    "collection_method": "html",
+    "active": true,
+    "reliability_metadata": {
+      "note": "Seed address; coverage is determined by successful extraction, never by registry membership."
+    }
+  },
+  {
+    "id": "78101af574d28aaf62d26078",
+    "name": "Официальный источник: Татарстан",
+    "type": "OFFICIAL_REGIONAL",
+    "base_url": "https://prav.tatarstan.ru/",
+    "region": "Татарстан",
+    "collection_method": "html",
+    "active": true,
+    "reliability_metadata": {
+      "note": "Seed address; coverage is determined by successful extraction, never by registry membership."
+    }
+  },
+  {
+    "id": "e200236e97c6ee805bd2ac36",
+    "name": "Официальный источник: Башкортостан",
+    "type": "OFFICIAL_REGIONAL",
+    "base_url": "https://t.me/bashkortostan_gov",
+    "region": "Башкортостан",
+    "collection_method": "telegram",
+    "active": true,
+    "reliability_metadata": {
+      "note": "Seed address; coverage is determined by successful extraction, never by registry membership."
+    }
+  },
+  {
+    "id": "b2edbafece3faa1acc32bb75",
+    "name": "Официальный источник: Краснодарский край",
+    "type": "OFFICIAL_REGIONAL",
+    "base_url": "https://admkrai.krasnodar.ru/",
+    "region": "Краснодарский край",
+    "collection_method": "html",
+    "active": true,
+    "reliability_metadata": {
+      "note": "Seed address; coverage is determined by successful extraction, never by registry membership."
+    }
+  },
+  {
+    "id": "536ac8c7ac7bfb29f7d28ff9",
+    "name": "Официальный источник: Нижегородская область",
+    "type": "OFFICIAL_REGIONAL",
+    "base_url": "https://nobl.ru/",
+    "region": "Нижегородская область",
+    "collection_method": "html",
+    "active": true,
+    "reliability_metadata": {
+      "note": "Seed address; coverage is determined by successful extraction, never by registry membership."
+    }
+  },
+  {
+    "id": "11e4b96163c203449b189b5c",
+    "name": "Официальный источник: Красноярский край",
+    "type": "OFFICIAL_REGIONAL",
+    "base_url": "https://krskstate.ru/",
+    "region": "Красноярский край",
+    "collection_method": "html",
+    "active": true,
+    "reliability_metadata": {
+      "note": "Seed address; coverage is determined by successful extraction, never by registry membership."
+    }
+  },
+  {
+    "id": "e3b549d35490a83d7999a285",
+    "name": "Официальный источник: Приморский край",
+    "type": "OFFICIAL_REGIONAL",
+    "base_url": "https://primorsky.ru/",
+    "region": "Приморский край",
+    "collection_method": "html",
+    "active": true,
+    "reliability_metadata": {
+      "note": "Seed address; coverage is determined by successful extraction, never by registry membership."
+    }
+  }
+]

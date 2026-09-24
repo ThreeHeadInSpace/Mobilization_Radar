@@ -1,0 +1,75 @@
+import { timingSafeEqual } from "node:crypto";
+import { config, required } from "./config/index.js";
+import { SupabaseDB } from "./database/index.js";
+import { Telegram, handleUpdate } from "./telegram/index.js";
+import { Worker } from "./jobs/worker.js";
+export function secureEqual(actual: string | undefined, expected: string) {
+  return (
+    expected.length >= 24 &&
+    typeof actual === "string" &&
+    Buffer.byteLength(actual) === Buffer.byteLength(expected) &&
+    timingSafeEqual(Buffer.from(actual), Buffer.from(expected))
+  );
+}
+export async function route(
+  path: string,
+  method: string,
+  headers: Record<string, string | undefined>,
+  body: any,
+): Promise<{ status: number; body: unknown }> {
+  try {
+    const c = config();
+    if (path === "/api/health") {
+      let database = false;
+      let configured = false;
+      try {
+        required(c, [
+          "SUPABASE_URL",
+          "SUPABASE_SECRET_KEY",
+          "XAI_API_KEY",
+          "TELEGRAM_BOT_TOKEN",
+          "TELEGRAM_ADMIN_CHAT_ID",
+          "TELEGRAM_CHANNEL_ID",
+          "CRON_SECRET",
+          "TELEGRAM_WEBHOOK_SECRET",
+        ]);
+        configured = true;
+        await new SupabaseDB(c).all("config", {}, undefined, 1);
+        database = true;
+      } catch {}
+      return {
+        status: database && configured ? 200 : 503,
+        body: { alive: true, database, configured },
+      };
+    }
+    if (method !== "POST")
+      return { status: 405, body: { error: "method_not_allowed" } };
+    if (path === "/api/jobs") {
+      if (
+        !secureEqual(headers.authorization, `Bearer ${c.CRON_SECRET}`) ||
+        c.CRON_SECRET.length < 24
+      )
+        return { status: 401, body: { error: "unauthorized" } };
+      required(c, ["SUPABASE_URL", "SUPABASE_SECRET_KEY"]);
+      const db = new SupabaseDB(c);
+      return {
+        status: 200,
+        body: await new Worker(db, c, new Telegram(c)).tick(),
+      };
+    }
+    if (path === "/api/telegram") {
+      if (
+        !secureEqual(
+          headers["x-telegram-bot-api-secret-token"],
+          c.TELEGRAM_WEBHOOK_SECRET,
+        )
+      )
+        return { status: 401, body: { error: "unauthorized" } };
+      await handleUpdate(new SupabaseDB(c), new Telegram(c), c, body);
+      return { status: 200, body: { ok: true } };
+    }
+    return { status: 404, body: { error: "not_found" } };
+  } catch {
+    return { status: 503, body: { error: "service_unavailable" } };
+  }
+}

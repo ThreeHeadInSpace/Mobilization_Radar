@@ -19,3 +19,9 @@ Thumbs.db
 
 # Logs
 *.log
+coverage/
+.env.*
+!.env.example
+supabase/.temp/
+supabase/.branches/
+.test-data/
