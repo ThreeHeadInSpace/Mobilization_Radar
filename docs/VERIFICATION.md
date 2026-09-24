@@ -7,7 +7,7 @@
 | Проверка | Результат |
 | --- | --- |
 | TypeScript build | Проходит |
-| Vitest | 45 тестов, 6 файлов, все проходят; dist исключён из test discovery |
+| Vitest | 60 тестов, 7 файлов, все проходят; dist исключён из test discovery |
 | Offline E2E | Fake collector → PostgreSQL → triage → synthesis → проверка evidence → индекс 2 → review → snapshot → approval → fake publisher → deep-link sources/methodology |
 | Реальный Supabase | Четыре миграции применены; 55 активных источников, 15 регионов |
 | REST/RPC runtime | Успешный доступ; lease захватывается, второй захват отклоняется |
@@ -23,6 +23,10 @@
 
 ## Не подтверждено / внешние ограничения
 
+Обновление по сообщению владельца: production `/api/smoke` в Vercel полностью успешен, включая Telegram permissions и xAI; локальный Telegram smoke по-прежнему недоступен. Ниже перечислены исторические ограничения первоначальной локальной проверки.
+
+Новый activation flow проверен тестами: авторизация до Telegram, фиксированный набор getMe/getChat/getChatMember/setWebhook без публикаций, безопасные ошибки и no-store, проверка APP_URL, вызовы только Vercel из локальной команды, запрет обращения к БД после неуспешного remote setup. PGlite с имитациями функций Vault/pg_cron проверяет транзакцию, повторную активацию с одним job и отказ от замены существующего секрета с rollback. Новый setup endpoint и live активация в рамках изменения не вызывались; их запускает владелец после deployment.
+
 Дополнительно реализован защищённый `POST /api/smoke` для проверки провайдеров из Vercel. Тестами подтверждены авторизация до внешних вызовов, разрешённый набор read-only Telegram/DB операций, единственный AI-запрос без retry, изоляция отказов, отдельный статус логирования, отсутствие секретов в ответах и no-store. Сам endpoint в production в рамках этого изменения не вызывался.
 
 1. **xAI live:** HTTP 403, ответ провайдера «This service is not available in your region». Модель не была успешно вызвана. Responses payload, validation, retries и cost parsing проверены имитациями; это не заменяет live-проверку модели и ключа в поддерживаемом регионе.
@@ -35,8 +39,8 @@
 ## Production gate для владельца
 
 1. Развернуть приложение согласно README в runtime с доступом к xAI и Telegram. Передать серверные env и оставить обязательный review.
-2. Выполнить `npm run smoke -- --ai` из среды с доступом к обоим провайдерам; продолжать только при успешном AI и Telegram smoke.
-3. Задать APP_URL и выполнить `npm run setup -- --activate` — webhook + минутный Supabase Cron.
+2. Проверить production `/api/smoke`; локальная доступность Telegram для активации больше не требуется.
+3. Задать одинаковый APP_URL в Vercel и локальном окружении, сохранить существующие секреты и после deployment выполнить `npm run setup -- --activate` — webhook из Vercel, затем локальная настройка Vault и минутного Supabase Cron.
 4. Выполнить `npm run monitor -- --review-only`; после формирования проверить источники и одобрить один реальный выпуск в admin chat.
 
 Финальная команда полного ручного прогона: `npm run monitor -- --review-only`. Она сама не публикует в канал; публикацию разрешает только admin approval и активная очередь.
@@ -52,4 +56,4 @@
 - `package.json`, `package-lock.json`, `.npmrc`, `tsconfig.json`: закреплённые зависимости и сборка.
 - `.env.example`, `.gitignore`, `README.md`, `PROJECT_CONTEXT.md`, `IMPLEMENTATION_PLAN.md`: окружение, безопасность и документация.
 
-Исходные продуктовые .txt и изображение не удалены и не изменены. Коммит/push не выполнялись. Полный live E2E пока не объявляется завершённым.
+Исходные продуктовые .txt и изображение не удалены и не изменены. Полный live E2E пока не объявляется завершённым.

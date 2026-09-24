@@ -6,7 +6,7 @@
 
 Backend MVP реализован на TypeScript/Node, без публичного frontend. Локальный end-to-end dry-run и интеграционные проверки PostgreSQL проходят. Четыре миграции применены к существующему Supabase; реестр содержит 55 активных источников и 15 регионов. Девять источников требуют специализированных адаптеров и учитываются как пробелы покрытия.
 
-**Live-запуск не активирован.** Из среды разработки xAI возвращает HTTP 403 «service not available in your region», а `api.telegram.org` — connect timeout. Поэтому успешный реальный AI-анализ и отправка Telegram не заявляются. Публичных тестовых сообщений нет. Подробности: [docs/VERIFICATION.md](docs/VERIFICATION.md).
+По сообщению владельца, production `/api/smoke` в Vercel успешно проверяет Supabase, Telegram permissions и xAI. Локальный доступ к Telegram ограничен, поэтому активация выполняет Telegram-операции через Vercel. Полный цикл публикации ещё требует проверки владельцем. Подробности: [docs/VERIFICATION.md](docs/VERIFICATION.md).
 
 ## Быстрый старт
 
@@ -154,11 +154,13 @@ npm run monitor -- --review-only
 1. Импортировать repository, Framework Preset **Other**, Node 22/24. Build command `npm run build`; `api/*.ts` — серверные функции. Настройки лимитов уже в `vercel.json`. Для worker нужен тариф/runtime с поддержкой 240 секунд.
 2. В Environment Variables добавить runtime credentials из `.env.local`, включая оба защитных токена. Не использовать `NEXT_PUBLIC_*`. Сохранить `REQUIRE_REVIEW_ALL=true`, `AUTO_PUBLISH_SAFE_REPORTS=false`.
 3. Разместить runtime в регионе, где доступен xAI по условиям провайдера. В текущей среде 403; не считать смену URL или модели исправлением регионального запрета.
-4. Проверить deployment `/api/health`, затем из среды с доступом к провайдерам выполнить `npm run smoke -- --ai`. После успешной проверки задать `APP_URL` в локальном `.env.local`.
-5. Выполнить **`npm run setup -- --activate`**. Команда проверяет health и Telegram permissions, регистрирует webhook, сохраняет endpoint/CRON_SECRET в Supabase Vault и включает минутный pg_cron job. Секретов в SQL-файлах нет. Vercel Cron не используется.
+4. Проверить deployment `/api/health`, затем защищённый production `/api/smoke`. Задать одинаковый `APP_URL` в Vercel и локальном `.env.local`: корневой HTTPS URL без пути, query или credentials. Использовать существующие `CRON_SECRET` и `TELEGRAM_WEBHOOK_SECRET`; локальный `CRON_SECRET` должен совпадать с Vercel.
+5. После deployment выполнить **`npm run setup -- --activate`**. Локальная команда проверяет health и вызывает защищённый endpoint Vercel `POST /api/setup/telegram`. Vercel проверяет Telegram и регистрирует webhook; только после успеха локальная команда через `DATABASE_URL` сохраняет настройки в Supabase Vault и включает минутный pg_cron job. Повторный запуск обновляет одну именованную задачу `radar-worker` для того же пользователя БД. Vault и Cron настраиваются в одной транзакции; существующий секрет не заменяется, при несовпадении активация останавливается. Vercel Cron не используется.
 6. Выполнить `npm run monitor -- --review-only`, проверить полученный черновик и источники. Одобрить один реальный выпуск в admin chat.
 
-Публичные API: `GET /api/health`, `POST /api/jobs` (Bearer CRON_SECRET), `POST /api/telegram` (Telegram secret header). Анонимный посетитель не может запускать анализ. Если включена Vercel Deployment Protection, production endpoints должны быть доступны Supabase и Telegram с собственными проверками авторизации приложения.
+Публичные API: `GET /api/health`, `POST /api/jobs`, `POST /api/smoke`, `POST /api/setup/telegram` (Bearer CRON_SECRET), `POST /api/telegram` (Telegram secret header). Анонимный посетитель не может запускать анализ. Если включена Vercel Deployment Protection, production endpoints должны быть доступны вызывающим клиентам с собственными проверками авторизации приложения.
+
+`POST /api/setup/telegram` не принимает настройки из тела запроса: он использует только серверные env, выполняет Telegram smoke и `setWebhook` на `${APP_URL}/api/telegram` с `TELEGRAM_WEBHOOK_SECRET`, сохраняя ожидающие updates. Он не публикует сообщения, не запускает monitoring и не обращается к AI или БД. Успех: `{"ok":true,"telegram":"ok","webhook":"registered"}`. Ошибки возвращают только фиксированные безопасные коды, ответы имеют `Cache-Control: no-store`. Повторная регистрация того же webhook допустима. Если последующая настройка БД завершилась ошибкой, webhook остаётся зарегистрированным; команду можно повторить после устранения ошибки.
 
 ## Структура и таблицы
 
@@ -182,6 +184,6 @@ npm run monitor -- --review-only
 - Независимость и семантическая идентичность частично извлекаются моделью; точные цитаты и консервативные правила уменьшают ошибки, но не заменяют редакторскую проверку.
 - История для synthesis ограничена 200 последними findings, обработка материалов и отчётов имеет bounded batches. Для роста объёма нужны pagination, архивный поиск и калибровка порогов.
 - Если анализ не успел к 18:00, выпуск задерживается до завершения/review. При полном отказе AI публикации нет. Автоматический breaking-news режим отсутствует.
-- Фактические live xAI/Telegram проверки и Vercel deployment ещё не пройдены из-за внешней доступности. Это оставшийся production gate, а не успешный live E2E.
+- Production smoke подтверждён владельцем; это не заменяет полный live E2E с активацией, ручной проверкой и публикацией выпуска.
 
 Исходные методология, шаблон поста, реестр ссылок и изображение сохранены на месте. [Актуальная архитектура](PROJECT_CONTEXT.md), [план реализации](IMPLEMENTATION_PLAN.md).

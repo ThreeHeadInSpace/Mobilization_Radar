@@ -4,6 +4,7 @@ import { SupabaseDB } from "./database/index.js";
 import { Telegram, handleUpdate } from "./telegram/index.js";
 import { Worker } from "./jobs/worker.js";
 import { runSmoke } from "./smoke.js";
+import { setupTelegram } from "./setup/telegram.js";
 export function secureEqual(actual: string | undefined, expected: string) {
   return (
     expected.length >= 24 &&
@@ -45,6 +46,14 @@ export async function route(
     }
     if (method !== "POST")
       return { status: 405, body: { error: "method_not_allowed" } };
+    if (path === "/api/setup/telegram") {
+      if (
+        c.CRON_SECRET.length < 24 ||
+        !secureEqual(headers.authorization, `Bearer ${c.CRON_SECRET}`)
+      )
+        return { status: 401, body: { error: "unauthorized" } };
+      return await setupTelegram(c);
+    }
     if (path === "/api/smoke") {
       if (
         c.CRON_SECRET.length < 24 ||
