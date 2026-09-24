@@ -32,6 +32,12 @@ export class TestDB implements DB {
         "utf8",
       ),
     );
+    await pg.exec(
+      readFileSync(
+        "supabase/migrations/20260924224323_radar_manual_review.sql",
+        "utf8",
+      ),
+    );
     return new TestDB(pg);
   }
   async all(

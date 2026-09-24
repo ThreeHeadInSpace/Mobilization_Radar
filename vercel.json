@@ -2,6 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "npm run build",
   "functions": {
+    "api/manual-review.ts": { "maxDuration": 60 },
     "api/jobs.ts": { "maxDuration": 240 },
     "api/telegram.ts": { "maxDuration": 60 },
     "api/health.ts": { "maxDuration": 15 },

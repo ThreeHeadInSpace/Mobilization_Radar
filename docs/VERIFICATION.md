@@ -7,7 +7,7 @@
 | Проверка | Результат |
 | --- | --- |
 | TypeScript build | Проходит |
-| Vitest | 60 тестов, 7 файлов, все проходят; dist исключён из test discovery |
+| Vitest | 70 тестов, 8 файлов, все проходят; dist исключён из test discovery |
 | Offline E2E | Fake collector → PostgreSQL → triage → synthesis → проверка evidence → индекс 2 → review → snapshot → approval → fake publisher → deep-link sources/methodology |
 | Реальный Supabase | Четыре миграции применены; 55 активных источников, 15 регионов |
 | REST/RPC runtime | Успешный доступ; lease захватывается, второй захват отклоняется |
@@ -22,6 +22,8 @@
 Тесты охватывают URL normalization/dedup, происхождение перепечаток, неверные цитаты, routine/unknown/regional/federal scoring, старые акты, review policy, structured output и retry, расходы, форматирование, deep-link, авторизацию admin, повторное approval, неоднозначную доставку, сверку channel_post, RLS, повторный анализ, сохранение старого snapshot и отказ AI без публикации.
 
 ## Не подтверждено / внешние ограничения
+
+Внеочередная проверка: тестами проверены admin-only меню, авторизация endpoint до IO, подтверждение без преждевременного run, отмена/expiry, повтор callback после завершения, конкурирующие подтверждения, active run без очереди/AI, полный manual pipeline с review-only отчётом, запрет публичного staging на уровне БД, приватная доставка с повтором, сохранение плановых ключей и переход через полночь. Миграция `20260924224323_radar_manual_review.sql` применена в production; read-only проверка подтверждает RLS, запрет anon SELECT/EXECUTE, service_role EXECUTE и одну активную задачу `radar-worker`. Security advisor не сообщает WARNING/ERROR; [INFO об отсутствии RLS policies](https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy) соответствует server-only доступу. Реальный внеочередной анализ и сообщения из нового интерфейса в этой проверке не запускались.
 
 Обновление по сообщению владельца: production `/api/smoke` в Vercel полностью успешен, включая Telegram permissions и xAI; локальный Telegram smoke по-прежнему недоступен. Ниже перечислены исторические ограничения первоначальной локальной проверки.
 

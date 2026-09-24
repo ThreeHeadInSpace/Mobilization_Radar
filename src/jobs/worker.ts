@@ -18,6 +18,8 @@ import { makeReport } from "../reports/index.js";
 import type { AIProvider } from "../providers/ai-provider.js";
 import { XAIProvider } from "../providers/xai-provider.js";
 import { Telegram, publish } from "../telegram/index.js";
+import { adminText, manualReportPages } from "../telegram/admin-text.js";
+import { nextScheduledKey } from "./schedule.js";
 export class Worker {
   constructor(
     private db: DB,
@@ -49,13 +51,22 @@ export class Worker {
     const previous = (
       await this.db.all("monitor_runs", {}, "started_at", 1)
     )[0];
-    return this.db.put("monitor_runs", {
-      id: randomUUID(),
-      idempotency_key: key,
-      trigger_type: trigger,
-      previous_run_id: previous?.id ?? null,
-      state: {},
-    });
+    try {
+      return await this.db.put("monitor_runs", {
+        id: randomUUID(),
+        idempotency_key: key,
+        trigger_type: trigger,
+        previous_run_id: previous?.id ?? null,
+        state: {},
+      });
+    } catch (error) {
+      // A manual RPC can win between our reads and insert. Resume the winner.
+      const winner =
+        (await this.db.all("monitor_runs", { status: "running" }))[0] ??
+        (await this.db.all("monitor_runs", { idempotency_key: key }))[0];
+      if (winner) return winner;
+      throw error;
+    }
   }
   async tick(now = new Date(), force = false) {
     const owner = randomUUID();
@@ -68,6 +79,7 @@ export class Worker {
     )
       return { status: "busy" };
     try {
+      await this.deliverManualResults();
       // A process crash after sendMessage is also ambiguous, never ready again.
       for (const q of await this.db.all("publication_queue", {
         status: "sending",
@@ -121,43 +133,45 @@ export class Worker {
         )[0];
         if (job) {
           run = await this.start(`review:${job.id}`, "reanalyze");
-          const summary = (
-            await this.db.all("summaries", { id: job.summary_id })
-          )[0];
-          for (const snapshot of summary.data.sources) {
-            await this.db.put(
-              "run_articles",
-              { run_id: run.id, article_id: snapshot.articleId },
-              "run_id,article_id",
+          if (run.idempotency_key === `review:${job.id}`) {
+            const summary = (
+              await this.db.all("summaries", { id: job.summary_id })
+            )[0];
+            for (const snapshot of summary.data.sources) {
+              await this.db.put(
+                "run_articles",
+                { run_id: run.id, article_id: snapshot.articleId },
+                "run_id,article_id",
+              );
+            }
+            await this.db.patch(
+              "admin_jobs",
+              { id: job.id },
+              { status: "running" },
             );
+            await this.db.patch(
+              "monitor_runs",
+              { id: run.id },
+              { state: { adminJob: job.id, summaryId: job.summary_id } },
+            );
+            run.state = { adminJob: job.id, summaryId: job.summary_id };
           }
-          await this.db.patch(
-            "admin_jobs",
-            { id: job.id },
-            { status: "running" },
-          );
-          await this.db.patch(
-            "monitor_runs",
-            { id: run.id },
-            { state: { adminJob: job.id, summaryId: job.summary_id } },
-          );
-          run.state = { adminJob: job.id, summaryId: job.summary_id };
         }
       }
       if (!run) {
-        const time = clock(now, this.c.APP_TIMEZONE);
-        const slot = this.c.MONITOR_HOURS.split(",")
-          .map((x) => `${x.padStart(2, "0")}:00`)
-          .filter((x) => x <= time)
-          .sort()
-          .at(-1);
+        const slot = nextScheduledKey(
+          this.c,
+          now,
+          await this.db.all("monitor_runs", {}, "started_at", 1000),
+        );
         if (force || slot)
           run = await this.start(
-            `${day(now, this.c.APP_TIMEZONE)}:${force ? "manual" : slot}`,
+            force ? `${day(now, this.c.APP_TIMEZONE)}:manual` : slot!,
             force ? "manual" : "scheduled",
           );
       }
       if (run?.status === "running") await this.step(run, now);
+      await this.deliverManualResults();
       if (clock(now, this.c.APP_TIMEZONE) >= this.c.PUBLICATION_TIME)
         await this.stageDaily(now);
       await this.warnBudget(now);
@@ -380,6 +394,13 @@ export class Worker {
           report.reviewReasons.push("Web discovery недоступен.");
           report.runStatus = "degraded";
         }
+        if (run.trigger_type === "manual-review") {
+          report.reviewRequired = true;
+          report.reviewState = "REVIEW_REQUIRED";
+          report.reviewReasons.push(
+            "Внеочередная проверка: только для администратора, без публикации.",
+          );
+        }
         await this.db.rpc("radar_save_report", {
           p_run: run.id,
           p_report: report,
@@ -425,6 +446,50 @@ export class Worker {
         )[0]?.data ?? null
     );
   }
+  async deliverManualResults() {
+    const requested = await this.db.all(
+      "manual_review_requests",
+      { status: "already_running" },
+      "created_at",
+      1000,
+    );
+    const runs = (
+      await this.db.all("monitor_runs", {}, "started_at", 1000)
+    ).filter(
+      (r) =>
+        r.trigger_type === "manual-review" ||
+        requested.some((q) => q.run_id === r.id),
+    );
+    for (const run of runs) {
+      if (run.status === "running" || run.state?.manualDelivered) continue;
+      const report = (await this.db.all("run_reports", { run_id: run.id }))[0]
+        ?.data;
+      const pages = report
+        ? manualReportPages(report, run.trigger_type === "manual-review")
+        : run.status === "analysis_failed"
+          ? [adminText.failed]
+          : [];
+      const state = { ...run.state };
+      try {
+        const end = Math.min((state.manualPage ?? 0) + 3, pages.length);
+        for (let i = state.manualPage ?? 0; i < end; i++) {
+          await this.tg.send(this.c.TELEGRAM_ADMIN_CHAT_ID, pages[i]);
+          state.manualPage = i + 1;
+          await this.db.patch("monitor_runs", { id: run.id }, { state });
+        }
+        if (pages.length && state.manualPage === pages.length)
+          await this.db.patch(
+            "monitor_runs",
+            { id: run.id },
+            { state: { ...state, manualDelivered: true } },
+          );
+      } catch {
+        /* Retry private delivery on the next tick, without rerunning AI. */
+      }
+      // Bound private sends per tick so delivery cannot monopolize the worker lease.
+      if (pages.length) return;
+    }
+  }
   async stageDaily(now: Date) {
     const date = day(now, this.c.APP_TIMEZONE);
     if (
@@ -433,7 +498,7 @@ export class Worker {
     )
       return;
     const runs = await this.db.all("monitor_runs", {}, "started_at", 50);
-    const latest = runs[0];
+    const latest = runs.find((r) => r.trigger_type !== "manual-review");
     if (
       !latest ||
       latest.status === "running" ||
@@ -444,6 +509,9 @@ export class Worker {
       await this.db.all("run_reports", {}, "created_at", 50)
     ).filter(
       (r) =>
+        runs.some(
+          (run) => run.id === r.run_id && run.trigger_type !== "manual-review",
+        ) &&
         day(new Date(r.created_at), this.c.APP_TIMEZONE) === date &&
         (latest.trigger_type !== "reanalyze" || r.run_id === latest.id),
     );

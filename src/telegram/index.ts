@@ -3,6 +3,15 @@ import type { Config } from "../config/index.js";
 import type { DB } from "../database/index.js";
 import type { Report } from "../domain.js";
 import { deepLink, sourcePages, methodology } from "../reports/index.js";
+import { manualReview, uuidPattern } from "../jobs/manual-review.js";
+import { adminText, adminMenu } from "./admin-text.js";
+function privateAdmin(c: Config, chat: any, from: any) {
+  return (
+    chat?.type === "private" &&
+    String(chat.id) === c.TELEGRAM_ADMIN_CHAT_ID &&
+    String(from?.id) === (c.TELEGRAM_OWNER_ID || c.TELEGRAM_ADMIN_CHAT_ID)
+  );
+}
 export class Telegram {
   constructor(
     private c: Config,
@@ -166,6 +175,47 @@ export async function handleUpdate(
   const callback = update.callback_query;
   if (callback) {
     const chat = callback.message?.chat;
+    if (String(callback.data ?? "").startsWith("manual:")) {
+      if (!privateAdmin(c, chat, callback.from)) {
+        await tg.call("answerCallbackQuery", {
+          callback_query_id: callback.id,
+          text: "Нет доступа",
+        });
+        return;
+      }
+      const [, action, token] = String(callback.data).split(":");
+      if (
+        !["confirm", "cancel"].includes(action) ||
+        !uuidPattern.test(token ?? "")
+      )
+        return;
+      const result = await manualReview(
+        db,
+        action as "confirm" | "cancel",
+        token,
+        String(callback.from.id),
+      );
+      await tg.call("answerCallbackQuery", { callback_query_id: callback.id });
+      await tg
+        .call("editMessageReplyMarkup", {
+          chat_id: chat.id,
+          message_id: callback.message.message_id,
+          reply_markup: { inline_keyboard: [] },
+        })
+        .catch(() => {});
+      const text =
+        result.status === "already_running"
+          ? adminText.busy
+          : result.status === "cancelled"
+            ? adminText.cancelled
+            : result.status === "started"
+              ? result.fresh
+                ? adminText.started
+                : adminText.duplicate
+              : adminText.expired;
+      await tg.send(c.TELEGRAM_ADMIN_CHAT_ID, text, adminMenu);
+      return;
+    }
     const authorized =
       String(chat?.id) === c.TELEGRAM_ADMIN_CHAT_ID &&
       (chat?.type === "private"
@@ -208,6 +258,32 @@ export async function handleUpdate(
   }
   const message = update.message;
   if (!message || message.chat?.type !== "private") return;
+  const admin = privateAdmin(c, message.chat, message.from);
+  if (message.text === adminText.button || message.text === "/manual_review") {
+    if (!admin) return;
+    const token = randomUUID();
+    const result = await manualReview(
+      db,
+      "prepare",
+      token,
+      String(message.from.id),
+    );
+    if (result.status === "already_running")
+      await tg.send(c.TELEGRAM_ADMIN_CHAT_ID, adminText.busy, adminMenu);
+    else
+      await tg.send(c.TELEGRAM_ADMIN_CHAT_ID, adminText.confirm, {
+        inline_keyboard: [
+          [
+            {
+              text: "✅ Да, подтверждаю",
+              callback_data: `manual:confirm:${token}`,
+            },
+          ],
+          [{ text: "❌ Отмена", callback_data: `manual:cancel:${token}` }],
+        ],
+      });
+    return;
+  }
   const match = /^\/start(?:@\w+)?(?:\s+([A-Za-z0-9_-]{1,64}))?$/.exec(
     message.text ?? "",
   );
@@ -233,5 +309,6 @@ export async function handleUpdate(
   await tg.send(
     chat,
     "РАДАР М. Откройте «Источники» под выпуском канала или /start methodology_v1.",
+    admin ? adminMenu : undefined,
   );
 }
