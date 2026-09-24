@@ -127,6 +127,20 @@ npm run smoke -- --ai
 
 `dry-run`: настоящая локальная PostgreSQL через PGlite, fake source/AI/Telegram; проходит от collector до approval, публикации, sources и methodology. Внешних вызовов нет. `test:db:live`: откатываемая транзакция на настоящем Supabase, без Telegram. `smoke --ai`: реальный getMe, проверка admin/channel прав, два RSS и небольшой платный xAI triage; в канал не пишет. Расходы/ошибки AI пишутся в `ai_usage`; стоимость берётся из `cost_in_usd_ticks / 1e10`, отсутствие стоимости остаётся null.
 
+### Production smoke из Vercel
+
+`POST /api/smoke` требует `Authorization: Bearer CRON_SECRET`. Проверки выполняются внутри serverless-функции Vercel: чтение Supabase, Telegram `getMe`, admin chat, channel, `getChatMember` с явной проверкой права публикации, один минимальный xAI triage. Тело запроса игнорируется. AI не повторяется при ошибке, web search отключён, ответ ограничен 512 токенами. Каждый сетевой запрос ограничен 15 секундами; лимит функции — 60 секунд.
+
+Endpoint не отправляет сообщения, не регистрирует webhook, не запускает worker/monitoring и не меняет таблицы проекта, кроме одной попытки записи `ai_usage` с `operation=smoke_triage`, `run_id=null`. Это небольшой платный AI-запрос, поэтому endpoint не следует использовать как регулярный healthcheck.
+
+Для вызова после deployment можно использовать PowerShell, если `APP_URL` и `CRON_SECRET` уже установлены в окружении терминала:
+
+```powershell
+Invoke-RestMethod -Method Post -Uri "$env:APP_URL/api/smoke" -Headers @{ Authorization = "Bearer $env:CRON_SECRET" }
+```
+
+`200` означает успех всех проверок; `503` возвращает раздельные статусы `supabase`, `telegramGetMe`, `telegramAdminChat`, `telegramChannel`, `telegramPermissions`, `xai`, `aiUsage`. Недоступность одного сервиса не отменяет независимые проверки других. Не выполненные зависимые проверки имеют статус `skipped`. `401` — неверный/отсутствующий секрет, `405` — метод отличается от POST. Ответы имеют `Cache-Control: no-store`, не содержат ключей, chat IDs, исходного ответа AI или текста исключений провайдеров.
+
 После доступности xAI и Telegram полный реальный прогон **без публикации в канал**:
 
 ```powershell

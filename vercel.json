@@ -4,6 +4,7 @@
   "functions": {
     "api/jobs.ts": { "maxDuration": 240 },
     "api/telegram.ts": { "maxDuration": 60 },
-    "api/health.ts": { "maxDuration": 15 }
+    "api/health.ts": { "maxDuration": 15 },
+    "api/smoke.ts": { "maxDuration": 60 }
   }
 }

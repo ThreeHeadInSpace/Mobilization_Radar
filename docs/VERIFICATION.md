@@ -7,7 +7,7 @@
 | Проверка | Результат |
 | --- | --- |
 | TypeScript build | Проходит |
-| Vitest | 32 теста, 5 файлов, все проходят; dist исключён из test discovery |
+| Vitest | 45 тестов, 6 файлов, все проходят; dist исключён из test discovery |
 | Offline E2E | Fake collector → PostgreSQL → triage → synthesis → проверка evidence → индекс 2 → review → snapshot → approval → fake publisher → deep-link sources/methodology |
 | Реальный Supabase | Четыре миграции применены; 55 активных источников, 15 регионов |
 | REST/RPC runtime | Успешный доступ; lease захватывается, второй захват отклоняется |
@@ -22,6 +22,8 @@
 Тесты охватывают URL normalization/dedup, происхождение перепечаток, неверные цитаты, routine/unknown/regional/federal scoring, старые акты, review policy, structured output и retry, расходы, форматирование, deep-link, авторизацию admin, повторное approval, неоднозначную доставку, сверку channel_post, RLS, повторный анализ, сохранение старого snapshot и отказ AI без публикации.
 
 ## Не подтверждено / внешние ограничения
+
+Дополнительно реализован защищённый `POST /api/smoke` для проверки провайдеров из Vercel. Тестами подтверждены авторизация до внешних вызовов, разрешённый набор read-only Telegram/DB операций, единственный AI-запрос без retry, изоляция отказов, отдельный статус логирования, отсутствие секретов в ответах и no-store. Сам endpoint в production в рамках этого изменения не вызывался.
 
 1. **xAI live:** HTTP 403, ответ провайдера «This service is not available in your region». Модель не была успешно вызвана. Responses payload, validation, retries и cost parsing проверены имитациями; это не заменяет live-проверку модели и ключа в поддерживаемом регионе.
 2. **Telegram live:** `UND_ERR_CONNECT_TIMEOUT` к api.telegram.org. GetMe/права канала не подтверждены. Публикация, callback и личный чат проверены fake Bot API; публичных сообщений не отправлялось.

@@ -21,9 +21,10 @@ export interface DB {
 }
 export class SupabaseDB implements DB {
   client: SupabaseClient;
-  constructor(c: Config) {
+  constructor(c: Config, request?: typeof fetch) {
     this.client = createClient(c.SUPABASE_URL, c.SUPABASE_SECRET_KEY, {
       auth: { persistSession: false, autoRefreshToken: false },
+      ...(request ? { global: { fetch: request } } : {}),
     });
   }
   async all(

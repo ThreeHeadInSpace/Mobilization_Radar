@@ -9,6 +9,11 @@ export class XAIProvider implements AIProvider {
     private c: Config,
     private usage: (u: Usage) => Promise<void>,
     private request: typeof fetch = fetch,
+    private options: {
+      maxAttempts?: number;
+      timeoutMs?: number;
+      maxOutputTokens?: number;
+    } = {},
   ) {}
   async call<T>(
     operation: string,
@@ -20,7 +25,8 @@ export class XAIProvider implements AIProvider {
       operation === "triage"
         ? this.c.XAI_TRIAGE_MODEL
         : this.c.XAI_SYNTHESIS_MODEL;
-    for (let attempt = 0; attempt < 2; attempt++) {
+    const maxAttempts = this.options.maxAttempts ?? 2;
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
       const start = Date.now();
       let metrics: any = {};
       let ok = false;
@@ -34,10 +40,13 @@ export class XAIProvider implements AIProvider {
               Authorization: `Bearer ${this.c.XAI_API_KEY}`,
               "Content-Type": "application/json",
             },
-            signal: AbortSignal.timeout(90000),
+            signal: AbortSignal.timeout(this.options.timeoutMs ?? 90000),
             body: JSON.stringify({
               model,
               store: false,
+              ...(this.options.maxOutputTokens
+                ? { max_output_tokens: this.options.maxOutputTokens }
+                : {}),
               input: [
                 { role: "system", content: instructions },
                 { role: "user", content: JSON.stringify(data) },
@@ -73,7 +82,7 @@ export class XAIProvider implements AIProvider {
         ok = true;
         return result;
       } catch {
-        if (attempt === 1) throw new Error("analysis_failed");
+        if (attempt === maxAttempts - 1) throw new Error("analysis_failed");
         await new Promise((r) => setTimeout(r, 500));
       } finally {
         await this.usage({
